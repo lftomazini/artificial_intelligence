@@ -22,26 +22,39 @@ def print_sudoku(board):
 
 def assigned_in_row(board, row, option):
 	row_options = np.setdiff1d(possibilities, board[row])
-	print(row_options)
+	# print(row_options)
 	if (option in row_options):
-		print(str(option) + " was already used in row " + str(row))
+		# print(str(option) + " was already used in row " + str(row))
 		return True
 	else:
-		print(str(option) + " was NOT used in row " + str(row))
+		# print(str(option) + " was NOT used in row " + str(row))
 		return False
 
 def assigned_in_column(board, column, option):
 	column_options = np.setdiff1d(possibilities, board[:, column])
-	print(column_options)
+	# print(column_options)
 	if (option in column_options):
-		print(str(option) + " was already used in column " + str(column))
+		# print(str(option) + " was already used in column " + str(column))
 		return True
 	else:
-		print(str(option) + " was NOT used in column " + str(column))
+		# print(str(option) + " was NOT used in column " + str(column))
 		return False
 
 def assigned_in_grid(board, row, column, option):
-	return True
+	dimension = len(board[0])
+	row = row // 3 * 3
+	column = column // 3 * 3
+
+	grid = board[row: row + 3, column: column + 3]
+	# print(grid)
+	grid = np.reshape(grid, dimension)
+	grid_options = np.setdiff1d(possibilities, grid)
+	# print(grid_options)
+
+	if (option in grid_options):
+		return True
+	else:
+		return False
 
 def safe_position(board, row, column, option):
 	return assigned_in_row(board, row, option) and assigned_in_column(board, column, option) and assigned_in_grid(board, row, column, option)
