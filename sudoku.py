@@ -13,10 +13,7 @@ filled = []
 # Used to bactrack in a guided search
 heuristic_array = []
 
-
-'''
-Prints the sudoku board
-'''
+# Prints the sudoku board
 def print_sudoku(board):
     os.system('clear')
     print("-"*37)
@@ -28,7 +25,7 @@ def print_sudoku(board):
             print("|" + "---+"*8 + "---|")
         else:
             print("|" + "   +"*8 + "   |")
-    # time.sleep(1)
+    time.sleep(1)
 
 
 # Verifies if a given number was put in a board row
@@ -109,23 +106,24 @@ Reference: https://github.com/SAURABHMARATHE/a-star_algorithm_code_for_sudoku/bl
 # Calculate the heuristic associated with each cell
 def heuristic (board):
     # Array to store the possible values for each cell
-    possible_values = []
+
 
     bestRow = 0
     bestColumn = 0
     dimension = len(board[0])
 
     for row in range (0, dimension):
-        for column in range (0,dimension):
+        for column in range (0, dimension):
             if (board[row, column] == 0):
-                for option in range(0,9):
+                possible_values = []
+                for option in range(1, 10):
                     if (safe_position(board, row, column, option)):
                         possible_values.append(option)
 
                 # Heuristic is the length of possible_values. The shorter is the array, the better is the heuristic.
                 heuristic_array.append([row, column, len(possible_values)])
 
-    # Calculate the cost of heuristic and takes the better position for the board.
+    # Calculate the cost of heuristic and takes the best position for the board.
     dimension  = len(possible_values)
     bestRow = heuristic_array[row][0]
     bestColumn = heuristic_array[row][1]
@@ -138,35 +136,31 @@ def heuristic (board):
             bestColumn = heuristic_array[row][1]
             minimum = heuristic_array[row][2]
 
+    del heuristic_array[bestRow]
+
     return bestRow, bestColumn
 
 # Solve the Sudoku board using the A Star Algorithm
 def run_a_star (board):
-    solved_cells = 0
+    solved_cells = np.count_nonzero(board)
+    # print(solved_cells)
 
-    for row in range(0, len(board)):
-        for column in range (0, len(board)):
-            if (board[row, column] != 0):
-                solved_cells += 1
-
-    while (solved_cells <= 81):
+    while (solved_cells < 81):
         row, column = heuristic(board)
-        for option in range (0, 9):
+        for option in range (1, 10):
             if (safe_position(board, row, column, option)):
                 board[row, column] = option
                 filled.append([row, column, option])
                 print_sudoku(board)
                 solved_cells += 1
                 break
-      
-
 
 if __name__ == "__main__":
-    board = np.loadtxt(sys.argv[1]).astype(int)
+    board = np.loadtxt(sys.argv[2]).astype(int)
 
-    if (str(sys.agrv[2]) == "-i"):
+    if (str(sys.argv[1]) == "-i"):
         print_sudoku(board)
         run_a_star(board)
-    elif (str(sys.argv[2]) == "-u"):
+    elif (str(sys.argv[1]) == "-u"):
         print_sudoku(board)
         solve(board)
