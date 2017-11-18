@@ -30,6 +30,7 @@ def print_sudoku(board):
             print("|" + "---+"*8 + "---|")
         else:
             print("|" + "   +"*8 + "   |")
+    print filled
     time.sleep(0.5)
 
 
