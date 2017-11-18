@@ -10,6 +10,7 @@ possibilities = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9])
 # Used to backtrack, appends a tuple containing the coordinates and the number put
 filled = []
 
+
 # Prints the sudoku board
 def print_sudoku(board):
     os.system('clear')
@@ -22,7 +23,8 @@ def print_sudoku(board):
             print("|" + "---+"*8 + "---|")
         else:
             print("|" + "   +"*8 + "   |")
-    time.sleep(1)
+    print filled
+    time.sleep(0.5)
 
 
 # Verifies if a given number was put in a board row
@@ -100,48 +102,47 @@ A-Star algorithm to solve Sudoku
 Reference: https://github.com/SAURABHMARATHE/a-star_algorithm_code_for_sudoku/blob/master/my_a_star_for_sudoku.py
 '''
 
-# Calculate the possible values for each empty cell on board
-def possible_values(board, row, column):
-    dimension = len(board)
-
-    if (board[row, column] != 0):
-        return -1
-
-    else:
-        possible_values = []
-        for option in range(1, 10):
-            if (safe_position(board, row, column, option)):
-                possible_values.append(option)
-        return len(possible_values)
-
-# Calculate the heuristic associated with each cell
-def heuristic (board):
-    dimension = len(board[0])
-    bestRow = 0
-    bestColumn = 0
-    heur = -1
-
-    for row in range (0, dimension):
-        for column in range (0, dimension):
-            if (board[row, column] == 0):
-                if ((heur == -1) and (heur > possible_values(board, row, column))):
-                    bestRow = row
-                    bestColumn = column
-
-    return bestRow, bestColumn
-
 def solve_a_star(board):
-    solved_cells = np.count_nonzero(board)
+    dimension = len(board[0])
+    possible_values = []
+    option = 1
 
-    while (solved_cells < 81):
-        row, column = heuristic(board)
-        for option in range(1, 10):
-            if (safe_position(board, row, column, option)):
-                board[row, column] = option
-                filled.append([row, column, option])
-                print_sudoku(board)
-                solved_cells = np.count_nonzero(board)
-                break
+    # Create the blank cells mapping
+    for row in range(0, dimension):
+        for column in range(0, dimension):
+            if (board[row, column] == 0):
+                heur = 0
+                for option in range(1, 10):
+                    if (safe_position(board, row, column, option)):
+                        heur += 1
+                possible_values.append([row, column, heur])
+
+    better = possible_values[0][2]
+    for i in range(0, len(possible_values)):
+        if (possible_values[i][2] < better):
+            better = possible_values[i][2]
+
+    while (len(possible_values) > 0):
+        for k in range(0, len(possible_values)):
+            if (possible_values[k][2] == better):
+                row = possible_values[k][0]
+                column = possible_values[k][1]
+
+                option = 1
+                while (option <= 10):
+                    if(safe_position(board, row, column, option)):
+                        board[row, column] = option
+                        filled.append([row, column, option])
+                        del possible_values[k]
+                        print_sudoku(board)
+                        break
+                    option += 1
+                if (option == 11):
+                    board[row, column] = 0
+                    execute(board, possible_values)
+
+
+
 
 if __name__ == "__main__":
     board = np.loadtxt(sys.argv[2]).astype(int)
