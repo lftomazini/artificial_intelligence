@@ -1,3 +1,10 @@
+'''
+Implementacao de Busca Informada e Nao Informada para resolucao de Sudoku
+
+Luiz Felipe Tomazini    595098
+Romao Martines          595071
+'''
+
 import sys
 import os
 import numpy as np
@@ -23,7 +30,6 @@ def print_sudoku(board):
             print("|" + "---+"*8 + "---|")
         else:
             print("|" + "   +"*8 + "   |")
-    print filled
     time.sleep(0.5)
 
 
@@ -117,14 +123,11 @@ def solve_a_star(board):
                         heur += 1
                 possible_values.append([row, column, heur])
 
-    better = possible_values[0][2]
-    for i in range(0, len(possible_values)):
-        if (possible_values[i][2] < better):
-            better = possible_values[i][2]
 
     while (len(possible_values) > 0):
+        better = possible_values[0][2]
         for k in range(0, len(possible_values)):
-            if (possible_values[k][2] == better):
+            if (possible_values[k][2] < better):
                 row = possible_values[k][0]
                 column = possible_values[k][1]
 
@@ -138,11 +141,15 @@ def solve_a_star(board):
                         break
                     option += 1
                 if (option == 11):
-                    board[row, column] = 0
-                    execute(board, possible_values)
-
-
-
+                    row = filled[-1][0]
+                    column = filled[-1][1] - 1
+                    option = filled[-1][2] + 1
+                    board[row, column + 1] = 0
+                    print_sudoku(board)
+                    del filled[-1]
+                    break
+                else:
+                    option = 1
 
 if __name__ == "__main__":
     board = np.loadtxt(sys.argv[2]).astype(int)
