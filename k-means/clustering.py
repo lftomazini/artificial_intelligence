@@ -7,7 +7,6 @@ data = np.array([])
 centroids = np.array([])
 groups = [0]
 new_groups = [1]
-iteration = 0
 
 np.set_printoptions(threshold='nan')
 np.set_printoptions(suppress=True)
@@ -27,8 +26,6 @@ def clusters():
 	global new_groups
 	global iteration
 
-	iteration += 1
-	print(iteration)
 	groups = new_groups
 	new_groups = []
 	for row in data:
@@ -50,13 +47,11 @@ def redefine_centroids():
 			c1.append(data[i].tolist())
 		else:
 			c2.append(data[i].tolist())
-	print(c1)
 	centroids[0] = np.mean(c1, axis=0)
 	centroids[1] = np.mean(c2, axis=0)
 
 
 if __name__ == "__main__":
-	print(data)
 	data = np.genfromtxt(sys.argv[1])
 	preprocessing()
 
