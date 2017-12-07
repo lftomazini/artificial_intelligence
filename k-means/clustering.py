@@ -2,11 +2,13 @@ import sys
 import time
 import numpy as np
 import matplotlib.pyplot as plt
+import pylab as pl
 
 data = np.array([])
 centroids = np.array([])
 groups = [0]
 new_groups = [1]
+color_dict = {0: 'red', 1: 'black'}
 
 np.set_printoptions(threshold='nan')
 np.set_printoptions(suppress=True)
@@ -35,6 +37,13 @@ def clusters():
 		new_groups.append(distances.index(min(distances)))
 	redefine_centroids()
 
+def plot_data():
+	global data
+
+	fig, ax = plt.subplots()
+	ax.scatter(np.array(data[:,4]),np.array(data[:,6]), c=map(color_dict.get, np.floor(data[:,-1])), edgecolors = map(color_dict.get, groups), linewidth = 1.5)
+	plt.show()
+
 def redefine_centroids():
 	global data
 	global centroids
@@ -59,4 +68,4 @@ if __name__ == "__main__":
 
 	while (groups != new_groups):
 		clusters()
-	print(groups)
+	plot_data()
