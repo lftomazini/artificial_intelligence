@@ -58,23 +58,32 @@ def redefine_centroids():
 	centroids[0] = np.mean(c1, axis=0)
 	centroids[1] = np.mean(c2, axis=0)
 
-''' Plots a bidimensional graph of the two attributes'''
-def plot_data(x_attribute, y_attribute):
+''' Plots a n-dimensional graph with all attributes iteractions'''
+def plot_data(num_attributes):
 	global data
 
+	fig, ax = plt.subplots(num_attributes, num_attributes, sharex=True, sharey=True)
+
+	for i in range(0, num_attributes):
+		for j in range(0, num_attributes):
+			ax[i, j].set_xlabel(labels[i+1])
+			ax[i, j].set_ylabel(labels[j+1])
+			ax[i, j].scatter(np.array(data[:,i+1]),np.array(data[:,j+1]), c=map(color_dict.get, np.floor(data[:,-1])), edgecolors = map(color_dict.get, groups), linewidth = 1.5)
+	plt.show()
+
+def save_plot(x_attribute, y_attribute):
 	fig, ax = plt.subplots()
+
 	ax.set_xlabel(labels[x_attribute])
 	ax.set_ylabel(labels[y_attribute])
 	ax.scatter(np.array(data[:,x_attribute]),np.array(data[:,y_attribute]), c=map(color_dict.get, np.floor(data[:,-1])), edgecolors = map(color_dict.get, groups), linewidth = 1.5)
-	# plt.show()
-	plt.savefig('att' + str(x_attribute) + '_x_att' + str(y_attribute))
+	plt.savefig('att' + labels[x_attribute] + '_x_att' + labels[y_attribute])
 
-''' Generates al graphs up to the nth attribute'''
+
 def generate_figures(num_attributes):
 	attributes = itertools.combinations(range(1, num_attributes + 1), 2)
 	for item in attributes:
-		plot_data(item[0], item[1])
-
+		save_plot(item[0], item[1])
 
 if __name__ == "__main__":
 	data = np.genfromtxt(sys.argv[1])
@@ -88,4 +97,6 @@ if __name__ == "__main__":
 		clusters()
 
 	''' Exports results'''
+	plot_data(5)
 	generate_figures(5)
+
